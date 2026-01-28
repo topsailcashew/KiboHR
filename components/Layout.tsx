@@ -57,11 +57,8 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="h-full flex flex-col px-6 py-8">
-          <div className="flex items-center gap-3 mb-12 px-2">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">
-              K
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">KiboHR</h1>
+          <div className="flex items-center mb-12 px-2">
+            <img src="/logo.svg" alt="KiboHR Logo" className="h-10 object-contain" />
           </div>
 
           <nav className="flex-1 space-y-1">

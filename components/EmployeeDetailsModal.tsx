@@ -1,12 +1,13 @@
 
 import React from 'react';
-import { X, User, Briefcase, Landmark, ShieldCheck, Mail, Phone, Calendar, CreditCard, Receipt } from 'lucide-react';
+import { X, User, Briefcase, Landmark, ShieldCheck, Mail, Phone, Calendar, CreditCard, Receipt, Edit3 } from 'lucide-react';
 import { Employee } from '../types';
 
 interface EmployeeDetailsModalProps {
   employee: Employee | null;
   isOpen: boolean;
   onClose: () => void;
+  onEdit?: (employee: Employee) => void;
 }
 
 const DetailSection: React.FC<{ title: string; icon: React.ReactNode; children: React.ReactNode }> = ({ title, icon, children }) => (
@@ -28,8 +29,10 @@ const DetailItem: React.FC<{ label: string; value: string | number | React.React
   </div>
 );
 
-export const EmployeeDetailsModal: React.FC<EmployeeDetailsModalProps> = ({ employee, isOpen, onClose }) => {
+export const EmployeeDetailsModal: React.FC<EmployeeDetailsModalProps> = ({ employee, isOpen, onClose, onEdit }) => {
   if (!isOpen || !employee) return null;
+
+  const grossPay = employee.basicPay + employee.houseAllowance + employee.transportAllowance + employee.otherAllowances;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all animate-in fade-in duration-200">
@@ -70,6 +73,19 @@ export const EmployeeDetailsModal: React.FC<EmployeeDetailsModalProps> = ({ empl
             <DetailItem label="Start Date" value={new Date(employee.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })} />
           </DetailSection>
 
+          <DetailSection title="Compensation Summary" icon={<CreditCard size={16} />}>
+            <DetailItem label="Basic Pay" value={`TZS ${employee.basicPay.toLocaleString()}`} />
+            <DetailItem label="House Allowance" value={`TZS ${employee.houseAllowance.toLocaleString()}`} />
+            <DetailItem label="Transport Allowance" value={`TZS ${employee.transportAllowance.toLocaleString()}`} />
+            <DetailItem label="Other Allowances" value={`TZS ${employee.otherAllowances.toLocaleString()}`} />
+            <div className="md:col-span-2 pt-2 border-t border-slate-100 mt-2">
+              <DetailItem
+                label="Total Gross Pay"
+                value={<span className="text-lg text-blue-600">TZS {grossPay.toLocaleString()}</span>}
+              />
+            </div>
+          </DetailSection>
+
           <DetailSection title="Statutory Information" icon={<ShieldCheck size={16} />}>
             <DetailItem label="TIN Number" value={employee.tinNumber} />
             <DetailItem label="NSSF Number" value={employee.nssfNumber} />
@@ -82,8 +98,6 @@ export const EmployeeDetailsModal: React.FC<EmployeeDetailsModalProps> = ({ empl
           <DetailSection title="Financial & Banking" icon={<Landmark size={16} />}>
             <DetailItem label="Bank Name" value={employee.bankShortCode} />
             <DetailItem label="Account Number" value={employee.bankAccountNumber} />
-            <DetailItem label="House Allowance" value={`TZS ${employee.houseAllowance.toLocaleString()}`} />
-            <DetailItem label="Transport Allowance" value={`TZS ${employee.transportAllowance.toLocaleString()}`} />
           </DetailSection>
         </div>
 
@@ -93,10 +107,15 @@ export const EmployeeDetailsModal: React.FC<EmployeeDetailsModalProps> = ({ empl
             <Receipt size={18} />
             Generate Statement
           </button>
-          <button className="flex-[2] px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2">
-            <CreditCard size={18} />
-            Modify Compensation
-          </button>
+          {onEdit && (
+            <button
+              onClick={() => onEdit(employee)}
+              className="flex-[2] px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
+            >
+              <Edit3 size={18} />
+              Edit Employee
+            </button>
+          )}
         </div>
       </div>
     </div>
